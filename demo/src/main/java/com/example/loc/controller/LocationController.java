@@ -29,7 +29,6 @@ import com.example.loc.repository.MemberRepository;
 import com.example.loc.service.Location.LocationService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

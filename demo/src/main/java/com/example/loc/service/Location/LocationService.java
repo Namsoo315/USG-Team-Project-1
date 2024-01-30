@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.loc.domain.Member.Member;
-import com.example.loc.dto.Location.HomeInfoDTO;
 import com.example.loc.dto.Location.LocationInfoReqDTO;
 import com.example.loc.dto.Location.LocationInfoResDTO;
 import com.example.loc.dto.Location.HomeInfoAllDTO;

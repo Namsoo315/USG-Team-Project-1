@@ -18,8 +18,5 @@ public interface LocationRepository extends JpaRepository<Location, Long>{
     // id,name,comment 조회
     List<HomeInfoDTO> findAllByIdNotNull();
 
-    // Location 모든정보 가져오기
-    List<Location> findAll();
-
     
 }

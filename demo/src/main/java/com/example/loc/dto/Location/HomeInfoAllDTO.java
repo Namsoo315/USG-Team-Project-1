@@ -15,5 +15,4 @@ public class HomeInfoAllDTO {
     private String comment;
     private Type type;
     private String imgUrl;
-
 }
