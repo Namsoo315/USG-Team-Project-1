@@ -1,6 +1,7 @@
 package com.example.loc.domain.Location;
 
 import com.example.loc.domain.Member.Member;
+import com.example.loc.dto.Location.LocationInfoResDTO;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -52,6 +53,16 @@ public class Location {
         this.type = type;
         this.member = member;
     }
+
+    public LocationInfoResDTO toLocationInfoDTO() {
+        LocationInfoResDTO locationInfoDTO = new LocationInfoResDTO(
+            this.getId(),
+            this.getName(),
+            this.getAddr(),
+            this.getComment(),
+            this.getPhone(),
+            this.getLocationImg().getImgUrl()
+        );
+        return locationInfoDTO;
+    }
 }
-
-

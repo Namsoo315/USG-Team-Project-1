@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.loc.domain.Member.Member;
 import com.example.loc.dto.Location.HomeInfoAllDTO;
 import com.example.loc.dto.Location.HomeInfoDTO;
+import com.example.loc.dto.Location.LocationInfoReqDTO;
+import com.example.loc.dto.Location.LocationInfoResDTO;
 import com.example.loc.dto.Location.RegistInfoReqDTO;
 import com.example.loc.global.message.MessageResponse;
 import com.example.loc.repository.Location.LocationRepository;
@@ -26,6 +29,7 @@ import com.example.loc.repository.MemberRepository;
 import com.example.loc.service.Location.LocationService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +48,7 @@ public class LocationController {
     private final MemberRepository memberRepository;
     
     @Operation(summary = "홈페이지 필요한 데이터 송신")
-    @PostMapping("/home") // 홈페이지에 필요한 데이터 송신
+    @GetMapping("/home") // 홈페이지에 필요한 데이터 송신
     public ResponseEntity<MessageResponse> getHomePageData() {
         List<HomeInfoAllDTO> homePageData = locationService.getHomePageData();
 
@@ -52,6 +56,16 @@ public class LocationController {
         response.setData(homePageData);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "홈페이지에서 이미지 클릭 후 접속하는 상세정보 페이지")
+    @GetMapping("/home/info/{id}") // 리뷰 작성 페이지를 접속하기 위한 
+    public ResponseEntity<MessageResponse> getLocationPageData(@Valid @PathVariable Long id, LocationInfoReqDTO request) {
+        LocationInfoResDTO locationPageData = locationService.getLocationPageData(request, id);
+        MessageResponse<LocationInfoResDTO> response = new MessageResponse<>("매장 등록 정보 송신 완료");
+        response.setData(locationPageData);
+        return ResponseEntity.ok(response);
+    }
+    
     
     @Operation(summary = "매장 등록")
     @PostMapping("/reg") // 매장 등록
