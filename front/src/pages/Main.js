@@ -8,7 +8,7 @@ const Main = () => {
     // 서버에서 데이터를 가져오는 비동기 함수 (axios 또는 fetch 등 사용)
     const fetchData = async () => {
       try {
-        const response = await axios.post('http://localhost:8081/api/location/home'); 
+        const response = await axios.get('http://localhost:8081/api/location/home'); 
         const result = response.data;
         console.log(result);
         setData(result.data); // 데이터를 상태에 설정

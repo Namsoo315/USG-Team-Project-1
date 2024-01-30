@@ -15,6 +15,8 @@ import com.example.loc.domain.Location.Location;
 import com.example.loc.domain.Location.LocationImg;
 import com.example.loc.domain.Member.Member;
 import com.example.loc.dto.Location.HomeInfoDTO;
+import com.example.loc.dto.Location.LocationInfoReqDTO;
+import com.example.loc.dto.Location.LocationInfoResDTO;
 import com.example.loc.dto.Location.HomeInfoAllDTO;
 import com.example.loc.dto.Location.RegistInfoReqDTO;
 import com.example.loc.repository.Location.LocationImgRepository;
@@ -30,9 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class LocationServiceImple implements LocationService{
 
     private final LocationRepository locationRepository;
-    private final LocationImgRepository locationImgRepository;
     private final ImgService imgService;
-    private final MemberRepository memberRepository;
 
     // 홈페이지 송신
     @Override
@@ -47,10 +47,26 @@ public class LocationServiceImple implements LocationService{
             } catch (IOException e){
                 e.printStackTrace();
             }
-            return new HomeInfoAllDTO(location.getId(), location.getName(), location.getComment(), base64Image);
+            return new HomeInfoAllDTO(location.getId(), location.getName(),location.getComment(), location.getType(), base64Image);
         }).collect(Collectors.toList());
         
         return homepageAllData;
+    }
+
+    // 매장 정보 조회
+    @Override
+    public LocationInfoResDTO getLocationPageData(LocationInfoReqDTO request, Long id) {
+        request.setId(id);
+        LocationInfoResDTO locationPageData = locationRepository.findById(request.getId()).map(location -> location.toLocationInfoDTO()).orElseThrow(
+            () -> new Error("등록되어 있지 않은 매장(업소) 입니다.")
+        );
+        String base64Image = null;
+        try {
+            base64Image = imgService.getBase64Image(locationPageData.getImgUrl());
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return new LocationInfoResDTO(locationPageData.getId(), locationPageData.getName(),locationPageData.getAddr(), locationPageData.getComment(),locationPageData.getPhone(), base64Image);
     }
 
     // 등록
@@ -103,6 +119,7 @@ public class LocationServiceImple implements LocationService{
             throw new RuntimeException("해당 ID에 대한 매장 정보 없음");
         }
     }
+
     // 조회
 
     
