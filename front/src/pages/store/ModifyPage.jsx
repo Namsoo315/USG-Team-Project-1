@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Form, Button, Container, FormControl, FormLabel } from 'react-bootstrap';
-import '../Layout/ModifyPage.css';
+import '../../Layout/ModifyPage.css';
 
 const ModifyPage = () => {
   const [formData, setFormData] = useState({
