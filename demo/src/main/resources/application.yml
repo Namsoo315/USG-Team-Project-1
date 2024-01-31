@@ -12,7 +12,7 @@ spring:
         ddl-auto: update
 # 포트 변경
 server:
-  port: 8081
+  port: 8083
 
 # # H2 db 연결 정보
 # spring:
