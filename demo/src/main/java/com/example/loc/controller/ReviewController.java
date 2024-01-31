@@ -22,9 +22,11 @@ public class ReviewController {
 
     @PostMapping("/api/review")
     @Operation(summary = "리뷰 저장 *")
-    public ResponseEntity<MessageResponse> saveReview(@RequestBody SaveReviewReqDTO request) {
+    public ResponseEntity<MessageResponse> saveReview(@RequestBody SaveReviewReqDTO request,
+                                                      HttpServletRequest servletRequest) {
 
-        Long savedReviewId = reviewService.saveReview(request);
+        Member loginMember = loginMemberGetter.getLoginMember(servletRequest.getHeader("Authorization"));
+        Long savedReviewId = reviewService.saveReview(request, loginMember.getId());
 
         return ResponseEntity.ok(new MessageResponse(savedReviewId, "리뷰 작성이 완료되었습니다."));
     }
