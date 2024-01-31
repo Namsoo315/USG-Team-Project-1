@@ -18,22 +18,24 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="nickname", nullable = false, unique =true)
+    @Column(name="member_nickname", nullable = false, unique =true)
     private String nickname;
 
-    @Column(name="email", nullable = false, unique =true)
+    @Column(name="member_email", nullable = false, unique =true)
     private String email;
 
-    @Column(name="password", nullable = false)
+    @Column(name="member_password", nullable = false)
     private String password;
 
-    @Column(name="birth", nullable = false)
+    @Column(name="member_birth", nullable = false)
     private LocalDateTime birth;
 
     @Enumerated(EnumType.STRING)
+    @Column(name="member_role")
     private Role role;
 
     @Enumerated(EnumType.STRING)
+    @Column(name="member_gender")
     private Gender gender;
 
     @Builder

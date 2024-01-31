@@ -28,14 +28,20 @@ spring:
           uri: http://localhost:9091
           predicates:
             - Path=/api/member/**
+          filters:
+            - JwtAuthorizationFilter
         - id: location
           uri: http://localhost:9093
           predicates:
             - Path=/location/**,
+          filters:
+            - JwtAuthorizationFilter
         - id: review
           uri: http://localhost:9093
           predicates:
             - Path=/api/review/**
+          filters:
+            - JwtAuthorizationFilter
       #>>> API Gateway / Routes
       globalcors:
         corsConfigurations:
