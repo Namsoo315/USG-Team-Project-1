@@ -10,6 +10,14 @@ spring:
           default_batch_fetch_size: 1000
       hibernate:
         ddl-auto: update
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: ${LOCATION}
+        project-id: ${PROJECT_ID}
+        bucket: ${BUCKET}
+
 # 포트 변경
 server:
   port: 8083
