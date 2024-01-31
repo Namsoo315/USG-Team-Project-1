@@ -1,6 +1,7 @@
 package com.example.gateway.security.filter;
 
 import com.example.gateway.domain.member.Member;
+import com.example.gateway.domain.member.Role;
 import com.example.gateway.repository.MemberRepository;
 import com.example.gateway.security.api.ApiList;
 import com.example.gateway.token.TokenParser;
@@ -25,35 +26,71 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
+
+            String requestURI = request.getURI().getPath();
+            boolean isBlackList = checkBlackList(requestURI);
+            boolean isOwnerList = checkOwnerList(requestURI);
+
             try {
-                String authorizationHeader = request.getHeaders().getFirst("Authorization");
-                String token;
-                String email;
-                boolean isBlackList = checkBlackList(request.getURI().getPath());
+                if (!isBlackList) {
+                    chain.filter(exchange);
+                } else if (isBlackList && isOwnerList) {
+                    String authorizationHeader = request.getHeaders().getFirst("Authorization");
+                    String token;
+                    String email;
 
-                if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && isBlackList ) {
-                    // 토큰 추출
-                    token = authorizationHeader.substring(7);
-                    // 만료 체크
-                    if (parser.isExpiration(token)) {
-                        throw new IllegalArgumentException("AccessToken Expired");
+                    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
+                        token = authorizationHeader.substring(7);
+                        // 만료 체크
+                        if (parser.isExpiration(token)) {
+                            throw new IllegalArgumentException("AccessToken Expired");
+                        }
+
+                        // claim 을 받아와 정보 추출
+                        email = (String) parser.getToken(token).get("email");
+
+                        // DB 에 정보가 있는지 확인
+                        Member findMember = memberRepository.findByEmail(email)
+                                .orElseThrow(() -> new IllegalArgumentException("Member Not Exist"));
+
+                        if (!findMember.getRole().equals(Role.Owner)) {
+                            throw new IllegalArgumentException("Role Not Match");
+                        }
+
+                        return chain.filter(exchange);
+                    } else {
+                        throw new IllegalArgumentException("Token Not Exist");
                     }
+                } else if (isBlackList) {
+                    String authorizationHeader = request.getHeaders().getFirst("Authorization");
+                    String token;
+                    String email;
 
-                    // claim 을 받아와 정보 추출
-                    email = (String) parser.getToken(token).get("email");
+                    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
+                        token = authorizationHeader.substring(7);
+                        // 만료 체크
+                        if (parser.isExpiration(token)) {
+                            throw new IllegalArgumentException("AccessToken Expired");
+                        }
 
-                    // DB 에 정보가 있는지 확인
-                    Member findMember = memberRepository.findByEmail(email)
-                            .orElseThrow(() -> new IllegalArgumentException("Member Not Exist"));
+                        // claim 을 받아와 정보 추출
+                        email = (String) parser.getToken(token).get("email");
 
-                    return chain.filter(exchange);
-                } else {
-                    return chain.filter(exchange);
+                        // DB 에 정보가 있는지 확인
+                        Member findMember = memberRepository.findByEmail(email)
+                                .orElseThrow(() -> new IllegalArgumentException("Member Not Exist"));
+
+                        return chain.filter(exchange);
+                    } else {
+                        throw new IllegalArgumentException("Token Not Exist");
+                    }
                 }
             } catch (Exception e) {
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
+
+            return chain.filter(exchange);
         });
     }
 
@@ -61,6 +98,18 @@ public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuth
 
     }
 
+    private boolean checkOwnerList(String requestURI) {
+        boolean isOwnerList = false;
+
+        for (String ownerList : ApiList.getOwnerList()) {
+            if (isPatternMatch(requestURI, ownerList)) {
+                isOwnerList = true;
+                break;
+            }
+        }
+
+        return isOwnerList;
+    }
 
     private boolean checkBlackList(String requestURI) {
         boolean isBlackListed = false;
