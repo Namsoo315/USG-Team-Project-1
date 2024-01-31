@@ -6,7 +6,7 @@ public abstract class ApiList {
 
     };
     private static final String[] ownerList = {
-            "/api/member"
+
     };
     public static String[] getBlackList() {
         return blackList;
