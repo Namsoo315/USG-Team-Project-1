@@ -8,6 +8,7 @@ import com.example.gateway.token.TokenParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,15 @@ import org.springframework.stereotype.Component;
 public class JwtAuthorizationFilter extends AbstractGatewayFilterFactory<JwtAuthorizationFilter.Config> {
     private final TokenParser parser;
     private final MemberRepository memberRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    public JwtAuthorizationFilter(TokenParser parser, MemberRepository memberRepository) {
+        super(Config.class);
+        this.parser = parser;
+        this.memberRepository = memberRepository;
+        this.objectMapper = new ObjectMapper();
+    }
 
     @Override
     public GatewayFilter apply(Config config) {
