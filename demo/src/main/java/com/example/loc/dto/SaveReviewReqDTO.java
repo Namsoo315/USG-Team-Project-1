@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SaveReviewReqDTO {
 
-    private Long memberId;
     private Long locationId;
     private String review;
     private Double grade;
