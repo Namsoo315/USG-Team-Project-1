@@ -5,7 +5,7 @@
 ### 홈페이지
 
 `DB CLASS DIAGRAM`
-
+<img src="./img/DBclassDiagram.drawio.png">
 
 
 ```
