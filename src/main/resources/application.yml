@@ -20,31 +20,40 @@ spring:
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
-  profiles: default
   cloud:
     gateway:
       #<<< API Gateway / Routes
       routes:
         - id: Member
-          uri: http://localhost:8082
+          uri: http://localhost:9091
           predicates:
-            - Path=/member/**,
+            - Path=/api/member/**
         - id: location
-          uri: http://localhost:8083
+          uri: http://localhost:9093
           predicates:
             - Path=/location/**,
-        - id: frontend
-          uri: http://localhost:8080
+        - id: review
+          uri: http://localhost:9093
           predicates:
-            - Path=/**
+            - Path=/api/review/**
       #>>> API Gateway / Routes
       globalcors:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - "*"
+              - "http://localhost:9091"
             allowedMethods:
               - "*"
             allowedHeaders:
               - "*"
             allowCredentials: true
+
+server:
+  port: 9090
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway=DEBUG:
