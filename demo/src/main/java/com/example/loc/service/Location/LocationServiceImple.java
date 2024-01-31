@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.loc.domain.Location.Location;
@@ -18,11 +19,11 @@ import com.example.loc.dto.Location.HomeInfoAllDTO;
 import com.example.loc.dto.Location.RegistInfoReqDTO;
 import com.example.loc.repository.Location.LocationRepository;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
+@Transactional(readOnly=true)
 @RequiredArgsConstructor
 public class LocationServiceImple implements LocationService{
 
@@ -31,6 +32,7 @@ public class LocationServiceImple implements LocationService{
 
     // 홈페이지 송신
     @Override
+    @Transactional
     public List<HomeInfoAllDTO> getHomePageData() {
         List<HomeInfoDTO> homepageData = locationRepository.findAllByIdNotNull();
 
@@ -50,6 +52,7 @@ public class LocationServiceImple implements LocationService{
 
     // 매장 정보 조회
     @Override
+    @Transactional
     public LocationInfoResDTO getLocationPageData(LocationInfoReqDTO request, Long id) {
         request.setId(id);
         LocationInfoResDTO locationPageData = locationRepository.findById(request.getId()).map(location -> location.toLocationInfoDTO()).orElseThrow(
@@ -65,6 +68,8 @@ public class LocationServiceImple implements LocationService{
     }
 
     // 등록
+    @Override
+    @Transactional
     public Long regLocation(RegistInfoReqDTO regInfoDTO, MultipartFile imgFile, Member member) throws Exception {
 
         // 매장(업소) 등록
@@ -85,6 +90,7 @@ public class LocationServiceImple implements LocationService{
 
     // 수정
     @Override
+    @Transactional
     public void updateLocation(Long locationId, RegistInfoReqDTO updateInfoDTO, MultipartFile imgFile) throws Exception {
         // 주어진 ID에 해당하는 Location 조회
         Optional<Location> optionalLocation = locationRepository.findById(locationId);
